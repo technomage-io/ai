@@ -1,3 +1,4 @@
+from operator import contains
 import os
 import sys
 from dotenv import load_dotenv
@@ -14,22 +15,29 @@ def main():
        sys.exit(1)
 
     else:
+        verbose = "--verbose" in sys.argv
+        prompt = [arg for arg in sys.argv[1:] if arg != "--verbose"]
+        user_prompt = " ".join(prompt)
 
-        prompt = sys.argv[1:]
+
 
         response = client.models.generate_content(
             model='gemini-2.0-flash-001', 
             contents=prompt
         )
+       
+
 
         print("=== Model Response ===")
         print(response.text)
 
-        usage = response.usage_metadata
-        print(f"Prompt tokens: {usage.prompt_token_count}")
-        print(f"Response tokens: {usage.candidates_token_count}")
+        if verbose:
 
-   
-    
-if __name__ == "__main__": 
+            usage = response.usage_metadata
+            print(f'User prompt: "{user_prompt}"')
+            print(f"Prompt tokens: {usage.prompt_token_count}")
+            print(f"Response tokens: {usage.candidates_token_count}")
+
+
+if __name__ == "__main__":
    main()
