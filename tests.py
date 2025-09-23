@@ -1,31 +1,37 @@
-from functions.get_files_info import get_files_info  # Replace 'your_module' with the actual module name if needed
+from functions.get_file_content import get_file_content  # Replace 'your_module' with the actual module name if needed
+from config import MAX_CHARS 
 
 def run_tests():
-    print("get_files_info(\"calculator\", \".\"):")
-    result = get_files_info("calculator", ".")
-    print("Result for current directory:")
+    print('get_file_content(\"calculator\", \"main.py"):')
+    result = get_file_content("calculator", "main.py")
+    print("Result for 'main.py':")
     print(result)
+
+
+    print('get_file_content(\"calculator\", \"pkg/calculator.py"):')
+    result = get_file_content("calculator", "pkg/calculator.py")
+    print("Result for 'pkg/calculator.py':")
+    print(result)
+
+    print('get_file_content(\"calculator\", \"bin.cat"):')
+    result = get_file_content("calculator", "bin.cat")
+    print("Result for 'bin.cat':")
+    print(result)
+
+    print('get_file_content(\"calculator\", \"pkg/does_not_exist.py"):')
+    result = get_file_content("calculator", "pkg/does_not_exist.py")
+    print("Result for 'pkg/does_not_exist.py':")
+    print(result)
+
+
+
 
     print()
 
-    print("get_files_info(\"calculator\", \"pkg\"):")
-    result = get_files_info("calculator", "pkg")
-    print("Result for 'pkg' directory:")
-    print(result)
-    print()
-
-    print("get_files_info(\"calculator\", \"/bin\"):")
-    result = get_files_info("calculator", "/bin")
-    print("Result for '/bin' directory:")
-    print(result)
-    print()
-
-    print("get_files_info(\"calculator\", \"../\"):")
-    result = get_files_info("calculator", "../")
-    print("Result for '../' directory:")
-    print(result)
-    print()
-
+    if len(result) <= MAX_CHARS:
+        print(f"Test Passed: Content length ({len(result)}) is within MAX_CHARS ({MAX_CHARS})")
+    else:
+        print(f"Output is within MAX_CHARS ({MAX_CHARS})")
 if __name__ == "__main__":
     run_tests()
 
