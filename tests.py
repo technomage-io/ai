@@ -1,37 +1,20 @@
-from functions.get_file_content import get_file_content  # Replace 'your_module' with the actual module name if needed
-from config import MAX_CHARS 
+from functions.write_file import write_file  
+
 
 def run_tests():
-    print('get_file_content(\"calculator\", \"main.py"):')
-    result = get_file_content("calculator", "main.py")
-    print("Result for 'main.py':")
-    print(result)
+   result1 = write_file("calculator", "lorem.txt", "wait, this isn't lorem ipsum")
+   print(result1)
+   print()
 
+   result2= write_file("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet")
+   print(result2)
+   print()
 
-    print('get_file_content(\"calculator\", \"pkg/calculator.py"):')
-    result = get_file_content("calculator", "pkg/calculator.py")
-    print("Result for 'pkg/calculator.py':")
-    print(result)
+   result3 = write_file("calculator", "/tmp/temp.txt", "this should not be allowed")
+   print(result3)
+   print()
 
-    print('get_file_content(\"calculator\", \"bin.cat"):')
-    result = get_file_content("calculator", "bin.cat")
-    print("Result for 'bin.cat':")
-    print(result)
-
-    print('get_file_content(\"calculator\", \"pkg/does_not_exist.py"):')
-    result = get_file_content("calculator", "pkg/does_not_exist.py")
-    print("Result for 'pkg/does_not_exist.py':")
-    print(result)
-
-
-
-
-    print()
-
-    if len(result) <= MAX_CHARS:
-        print(f"Test Passed: Content length ({len(result)}) is within MAX_CHARS ({MAX_CHARS})")
-    else:
-        print(f"Output is within MAX_CHARS ({MAX_CHARS})")
+    
 if __name__ == "__main__":
     run_tests()
 
