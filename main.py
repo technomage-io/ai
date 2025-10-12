@@ -39,40 +39,57 @@ def main():
 
 
 def generate_content(client, messages, verbose):
-    response = client.models.generate_content(
-        model="gemini-2.0-flash-001",
-        contents=messages,
-        config=types.GenerateContentConfig(
-            tools=[available_functions], system_instruction=system_prompt
+    max_iterations = 20
+    for step in range(max_iterations):
+        try:
+            response = client.models.generate_content(
+                model="gemini-2.0-flash-001",
+                contents=messages,
+                config=types.GenerateContentConfig(
+                    tools=[available_functions],
+                    system_instruction=system_prompt
         ),
     )
-    if verbose and hasattr(response, "usage_metadata"):
-        print("Prompt tokens:", response.usage_metadata.prompt_token_count)
-        print("Response tokens:", response.usage_metadata.candidates_token_count)
+            if verbose and hasattr(response, "usage_metadata"):
+                print(f"\nStep {step + 1}")
+                print("Prompt tokens:", response.usage_metadata.prompt_token_count)
+                print("Response tokens:", response.usage_metadata.candidates_token_count)
 
-    if not response.function_calls:
-        print(response.text)
-        return
-    
-    all_results = []
+            for candidate in response.candidates:
+                messages.append(candidate.content)
 
-    for function_call_part in response.function_calls:
-        function_call_result = call_function(function_call_part, verbose=verbose)
+            if response.text:
+               print(response.text)
+               break
+            
+            
+            all_results = []
 
-        try:
-            result_payload = function_call_result.parts[0].function_response.response
-        except Exception:
-            raise RuntimeError("Fatal: Function response missing or malformed.")
+            for function_call_part in response.function_calls:
+                function_call_result = call_function(function_call_part, verbose=verbose)
+
+                try:
+                    result_payload = function_call_result.parts[0].function_response.response
+                except Exception:
+                    raise RuntimeError("Fatal: Function response missing or malformed.")
        
-        
+                print(result_payload["result"])
 
-        if verbose:
-            print(f"-> {result_payload}")
-        all_results.append(result_payload)
+                messages.append(
+                    types.Content(
+                        role="user",
+                        parts=[types.Part.from_function_response(
+                            name=function_call_part.name,
+                            response=result_payload
+                        )]
+                    )
+                )
+
+        except Exception as e:
+            print(f"Error during step {step + 1}: {e}")
+            break
 
 
-
-    print(result_payload["result"])
 
 
 if __name__ == "__main__":
